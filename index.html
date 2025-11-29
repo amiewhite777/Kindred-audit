@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kindred | Social Logistics Audit</title>
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --text-color: #f0f0f0;
+            --accent-color: #39ff14; /* Terminal Green */
+            --dim-color: #666;
+            --alert-color: #ff3333;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            border: 1px solid var(--dim-color);
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        h1, h2, h3 {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0;
+        }
+
+        .header-status {
+            border-bottom: 1px solid var(--dim-color);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 0.8em;
+            color: var(--dim-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Button Styling */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: transparent;
+            border: 1px solid var(--text-color);
+            color: var(--text-color);
+            font-family: inherit;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1em;
+        }
+
+        .btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .primary-btn {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .primary-btn:hover {
+            background-color: var(--accent-color);
+        }
+
+        /* Sections */
+        .hidden { display: none; }
+        
+        .diagnosis-box {
+            border: 1px solid var(--text-color);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .label {
+            font-size: 0.7em;
+            text-transform: uppercase;
+            color: var(--dim-color);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .waitlist-box {
+            background: #1a1a1a;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-status">
+        <span>NODAL THEORY v2.4</span>
+        <span>STATUS: <span id="systemStatus" class="blink">ONLINE</span></span>
+    </div>
+
+    <div id="startScreen" class="fade-in">
+        <h1>Social Logistics Audit</h1>
+        <p>Loneliness is not a feeling. It is a routing failure.</p>
+        <p>This diagnostic tool maps your network topology to identify bottlenecks, entropy, and structural fragility.</p>
+        <br>
+        <button class="btn primary-btn" onclick="startQuiz()">INITIATE SCAN</button>
+    </div>
+
+    <div id="quizScreen" class="hidden fade-in">
+        <div class="label">INPUT REQUIRED</div>
+        <h2 id="questionText">Question goes here</h2>
+        <div id="optionsContainer">
+            </div>
+    </div>
+
+    <div id="loadingScreen" class="hidden fade-in">
+        <h2>ANALYZING TOPOLOGY...</h2>
+        <p id="loadingText">Mapping Nodes...</p>
+    </div>
+
+    <div id="resultScreen" class="hidden fade-in">
+        <h1>DIAGNOSIS COMPLETE</h1>
+        
+        <div class="diagnosis-box">
+            <span class="label">PROFILE TYPE:</span>
+            <h2 id="resultTitle" style="color: var(--accent-color);">THE STRANDED NODE</h2>
+            <br>
+            <span class="label">CLINICAL ANALYSIS:</span>
+            <p id="resultDesc">Analysis description...</p>
+        </div>
+
+        <div class="diagnosis-box">
+            <span class="label">PRESCRIPTION (PROTOCOL):</span>
+            <p id="resultPrescription">Prescription...</p>
+        </div>
+
+        <div class="waitlist-box">
+            <span class="label">SYSTEM STATUS:</span>
+            <p><strong>Global Waitlist:</strong> 4,102 Nodes</p>
+            <p>To preserve Swarm Intelligence, we only admit users who prove Reciprocity Potential.</p>
+            <button class="btn primary-btn" onclick="window.location.href='mailto:waitlist@kindred.com?subject=Audit%20Result%20Application'">APPLY FOR BETA ACCESS</button>
+            <p style="font-size: 0.8em; text-align: center; margin-top: 10px;">*Invite 1 reciprocal node to skip the line.</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // THE DATA (The Nodal Theory Logic)
+    const questions = [
+        {
+            text: "In the last 7 days, how many unique individuals have you had a reciprocal conversation with (excluding work)?",
+            options: [
+                { text: "0 (Zero Signal)", points: 0, type: "stranded" },
+                { text: "1-3 (Low Bandwidth)", points: 5, type: "low" },
+                { text: "4-10 (Healthy Flow)", points: 10, type: "healthy" },
+                { text: "10+ (High Noise)", points: 5, type: "noise" }
+            ]
+        },
+        {
+            text: "If you had a personal emergency at 2:00 AM on a Tuesday, how many people could you call who would DEFINITELY pick up?",
+            options: [
+                { text: "Zero.", points: 0, type: "stranded" },
+                { text: "One specific person.", points: 2, type: "hub_risk" },
+                { text: "2-3 people.", points: 10, type: "robust" },
+                { text: "A group chat would handle it.", points: 8, type: "mesh" }
+            ]
+        },
+        {
+            text: "Think of your main social circle. If the 'Leader' of that group moved away tomorrow, would the group fall apart?",
+            options: [
+                { text: "Yes, instantly.", points: 0, type: "hub_dependent" },
+                { text: "We would drift apart slowly.", points: 5, type: "weak_edges" },
+                { text: "No, we are all connected.", points: 10, type: "mesh" }
+            ]
+        },
+        {
+            text: "When was the last time a casual acquaintance introduced you to a new idea, hobby, or opportunity?",
+            options: [
+                { text: "I don't have casual acquaintances.", points: 0, type: "closed" },
+                { text: "Can't remember.", points: 2, type: "stagnant" },
+                { text: "Last month.", points: 5, type: "weak_tie" },
+                { text: "This week.", points: 10, type: "permeable" }
+            ]
+        },
+        {
+            text: "After your typical social interaction, do you feel energized or drained?",
+            options: [
+                { text: "Drained. I need to recover.", points: 0, type: "entropy" },
+                { text: "Neutral. Maintenance.", points: 5, type: "stasis" },
+                { text: "Energized. I want more.", points: 10, type: "positive_loop" }
+            ]
+        },
+        {
+            text: "How often do you scroll a public feed (TikTok/IG) without interacting with anyone?",
+            options: [
+                { text: "3+ hours a day.", points: 0, type: "passive_heavy" },
+                { text: "1-2 hours.", points: 5, type: "passive_mod" },
+                { text: "Rarely. I use feeds to DM friends.", points: 10, type: "active" }
+            ]
+        },
+        {
+            text: "If you found a group of 30 people who shared your exact niche interests, would you sign a 'Social Contract' to show up for 7 days?",
+            options: [
+                { text: "No, too much pressure.", points: 0, type: "churn_risk" },
+                { text: "Maybe.", points: 5, type: "convertible" },
+                { text: "Yes. I need this.", points: 10, type: "architect" }
+            ]
+        }
+    ];
+
+    // STATE MANAGEMENT
+    let currentQuestion = 0;
+    let totalScore = 0;
+    let flags = {
+        stranded: 0,
+        hubDependent: 0,
+        passive: 0,
+        architect: 0
+    };
+
+    // FUNCTIONS
+    function startQuiz() {
+        document.getElementById('startScreen').classList.add('hidden');
+        document.getElementById('quizScreen').classList.remove('hidden');
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questions[currentQuestion];
+        document.getElementById('questionText').innerText = q.text;
+        const container = document.getElementById('optionsContainer');
+        container.innerHTML = '';
+
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            btn.innerText = opt.text;
+            btn.onclick = () => handleAnswer(opt);
+            container.appendChild(btn);
+        });
+    }
+
+    function handleAnswer(option) {
+        // Logic Tracking
+        totalScore += option.points;
+        
+        // Specific Diagnostics
+        if (option.type === "stranded") flags.stranded++;
+        if (option.type === "hub_dependent" || option.type === "hub_risk") flags.hubDependent++;
+        if (option.type === "passive_heavy") flags.passive++;
+        if (option.type === "architect") flags.architect++;
+
+        currentQuestion++;
+
+        if (currentQuestion < questions.length) {
+            renderQuestion();
+        } else {
+            calculateResults();
+        }
+    }
+
+    function calculateResults() {
+        document.getElementById('quizScreen').classList.add('hidden');
+        document.getElementById('loadingScreen').classList.remove('hidden');
+
+        // Fake loading for "System Analysis" feel
+        setTimeout(() => { document.getElementById('loadingText').innerText = "Measuring Entropy..."; }, 800);
+        setTimeout(() => { document.getElementById('loadingText').innerText = "Calculating Edge Strength..."; }, 1600);
+        setTimeout(() => { showFinalDiagnosis(); }, 2500);
+    }
+
+    function showFinalDiagnosis() {
+        document.getElementById('loadingScreen').classList.add('hidden');
+        document.getElementById('resultScreen').classList.remove('hidden');
+
+        let title = "";
+        let desc = "";
+        let prescription = "";
+
+        // THE ALGORITHM (From Nodal Theory)
+        
+        // Scenario 1: Stranded Node
+        if (totalScore < 25 || flags.stranded > 0) {
+            title = "THE STRANDED NODE";
+            desc = "Your graph is showing signs of **Entropic Decay**. You are a high-capacity node, but your current environment has severed your 'Weak Ties'. In network science, a node that stops transmitting signal eventually becomes invisible. You aren't introverted—you are unrouted.";
+            prescription = "PROTOCOL: FORCED PROXIMITY. You need to bypass small talk and enter a high-frequency, low-stakes environment. Join a Colony and complete one reciprocal interaction in 24 hours.";
+        }
+        // Scenario 2: Passive Observer (TikTok Addict)
+        else if (flags.passive > 0) {
+            title = "THE PASSIVE OBSERVER";
+            desc = "You are suffering from **Signal Parasitism**. You consume social data (scrolling) but transmit zero signal (interaction). You are absorbing energy from the network but providing no value back. This is why you feel drained rather than energized.";
+            prescription = "PROTOCOL: THE 1:1 RATIO. Stop broadcasting. Start interacting. For every hour of consumption, you owe the network one unit of contribution.";
+        }
+        // Scenario 3: Hub Dependent
+        else if (flags.hubDependent > 0) {
+            title = "HUB DEPENDENT";
+            desc = "Your network has a **Single Point of Failure**. You have routed 80% of your social needs through a single 'Supernode' (partner or best friend). If that link breaks, your entire social graph collapses. You are not secure; you are precarious.";
+            prescription = "PROTOCOL: DIVERSIFICATION. You need to build independent edges that do not route through your main Hub. Find a 'Structural Hole' totally separate from your current circle.";
+        }
+        // Scenario 4: The Architect
+        else {
+            title = "COLONY ARCHITECT";
+            desc = "Your topology is robust. You have high flow, strong edges, and healthy boundaries. You are a **Supernode** in waiting. The system needs you not just to participate, but to lead.";
+            prescription = "PROTOCOL: SWARM LEADERSHIP. You are eligible to lead a Kindred Colony. Your role is to facilitate the 'Weaver' algorithm and maintain homeostasis for others.";
+        }
+
+        document.getElementById('resultTitle').innerText = title;
+        document.getElementById('resultDesc').innerHTML = desc; // innerHTML for bolding
+        document.getElementById('resultPrescription').innerText = prescription;
+    }
+</script>
+
+</body>
+</html>
