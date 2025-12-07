@@ -116,71 +116,27 @@
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://qdwkfnmdrbcjrxqfbpkj.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkd2tmbm1kcmJjanJ4cWZicGtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxNjMxNzYsImV4cCI6MjA2NDczOTE3Nn0.NE6vHrWbHISz1Z0dkpfyrDSbhoierD6EbICIrMppPJk';
-
     async function loadStats() {
-      try {
-        // Get all waitlist entries
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist?select=*`, {
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-          }
-        });
-        const data = await res.json();
-        
-        // Calculate stats
-        const total = data.length;
-        
-        // Today's signups
-        const today = new Date().toISOString().split('T')[0];
-        const todayCount = data.filter(d => d.created_at && d.created_at.startsWith(today)).length;
-        
-        // This week
-        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-        const weekCount = data.filter(d => d.created_at && d.created_at > weekAgo).length;
-        
-        // Render dashboard
-        document.getElementById('dashboard').innerHTML = `
-          <div class="stat-box">
-            <div class="stat-label">TOTAL WAITLIST SIGNUPS</div>
-            <div class="stat-value">${total}</div>
-          </div>
-          
-          <div class="stat-row">
-            <div class="stat-box">
-              <div class="stat-label">TODAY</div>
-              <div class="stat-value">${todayCount}</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">THIS WEEK</div>
-              <div class="stat-value">${weekCount}</div>
-            </div>
-          </div>
-          
-          <div class="stat-box">
-            <div class="stat-label">RECENT SIGNUPS</div>
-            <div class="breakdown">
-              ${data.slice(-5).reverse().map(d => `
-                <div class="breakdown-item">
-                  <span class="breakdown-name">${d.email}</span>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `;
-        
-        document.getElementById('lastUpdated').textContent = 
-          'Last updated: ' + new Date().toLocaleTimeString();
-          
-      } catch (err) {
-        document.getElementById('dashboard').innerHTML = 
-          '<div class="loading">Error loading stats</div>';
-        console.error(err);
-      }
-    }
+  try {
+    const res = await fetch('/api/waitlist-count');
+    const data = await res.json();
     
+    document.getElementById('dashboard').innerHTML = `
+      <div class="stat-box">
+        <div class="stat-label">TOTAL WAITLIST SIGNUPS</div>
+        <div class="stat-value">${data.count || 0}</div>
+      </div>
+    `;
+    
+    document.getElementById('lastUpdated').textContent = 
+      'Last updated: ' + new Date().toLocaleTimeString();
+      
+  } catch (err) {
+    document.getElementById('dashboard').innerHTML = 
+      '<div class="loading">Error loading stats</div>';
+    console.error(err);
+  }
+}
     // Load on page load
     loadStats();
     
