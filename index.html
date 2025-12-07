@@ -307,29 +307,29 @@
         // THE ALGORITHM (From Nodal Theory)
         
         // Scenario 1: Stranded Node
-        if (totalScore < 25 || flags.stranded > 0) {
-            title = "THE STRANDED NODE";
-            desc = "Your graph is showing signs of **Entropic Decay**. You are a high-capacity node, but your current environment has severed your 'Weak Ties'. In network science, a node that stops transmitting signal eventually becomes invisible. You aren't introverted—you are unrouted.";
-            prescription = "PROTOCOL: FORCED PROXIMITY. You need to bypass small talk and enter a high-frequency, low-stakes environment. Join a Colony and complete one reciprocal interaction in 24 hours.";
-        }
-        // Scenario 2: Passive Observer (TikTok Addict)
-        else if (flags.passive > 0) {
-            title = "THE PASSIVE OBSERVER";
-            desc = "You are suffering from **Signal Parasitism**. You consume social data (scrolling) but transmit zero signal (interaction). You are absorbing energy from the network but providing no value back. This is why you feel drained rather than energized.";
-            prescription = "PROTOCOL: THE 1:1 RATIO. Stop broadcasting. Start interacting. For every hour of consumption, you owe the network one unit of contribution.";
-        }
-        // Scenario 3: Hub Dependent
-        else if (flags.hubDependent > 0) {
-            title = "HUB DEPENDENT";
-            desc = "Your network has a **Single Point of Failure**. You have routed 80% of your social needs through a single 'Supernode' (partner or best friend). If that link breaks, your entire social graph collapses. You are not secure; you are precarious.";
-            prescription = "PROTOCOL: DIVERSIFICATION. You need to build independent edges that do not route through your main Hub. Find a 'Structural Hole' totally separate from your current circle.";
-        }
-        // Scenario 4: The Architect
-        else {
-            title = "COLONY ARCHITECT";
-            desc = "Your topology is robust. You have high flow, strong edges, and healthy boundaries. You are a **Supernode** in waiting. The system needs you not just to participate, but to lead.";
-            prescription = "PROTOCOL: SWARM LEADERSHIP. You are eligible to lead a Kindred Colony. Your role is to facilitate the 'Weaver' algorithm and maintain homeostasis for others.";
-        }
+if (totalScore < 25 || flags.stranded > 0) {
+    title = "THE STRANDED NODE";
+    desc = "Your network has become **quieter than it needs to be**. You're not lacking social ability—you're lacking pathways. In network science, 'weak ties' (acquaintances, loose connections) are actually what create opportunity. Yours have faded, but they can be rebuilt.";
+    prescription = "PROTOCOL: SMALL EXPERIMENTS. You don't need to overhaul your life. Start with one low-pressure environment where showing up is the only requirement. A class, a club, a regular spot. Roots grow slowly.";
+}
+// Scenario 2: Passive Observer
+else if (flags.passive > 0) {
+    title = "THE PASSIVE OBSERVER";
+    desc = "You're **taking in more than you're putting out**—and that's exhausting you. Watching others connect isn't the same as connecting. The good news? You're already paying attention to social dynamics. That's a skill. You just need to turn observation into participation.";
+    prescription = "PROTOCOL: MICRO-CONTRIBUTIONS. Start small. One comment, one message, one reply. You don't owe the world a performance—just a presence. Energy flows both ways when you let it.";
+}
+// Scenario 3: Hub Dependent
+else if (flags.hubDependent > 0) {
+    title = "THE HUB DEPENDENT";
+    desc = "You've built something **deep but narrow**. One or two people hold most of your social world together. That's not wrong—it means you know how to bond. But it also means you're vulnerable if life shifts. Diversifying isn't disloyal; it's sustainable.";
+    prescription = "PROTOCOL: PARALLEL PATHS. Keep your close bonds strong, but plant seeds elsewhere too. Find one space that's entirely yours—where you're known independently. It's not backup; it's growth.";
+}
+// Scenario 4: The Architect
+else {
+    title = "COLONY ARCHITECT";
+    desc = "Your network is **balanced and resilient**. You have depth and breadth, give and take. You intuitively understand how connection works. That's rare—and it means you're in a position to help others find what you've found.";
+    prescription = "PROTOCOL: QUIET LEADERSHIP. You don't need to fix yourself. But you might be ready to create spaces where others can connect. Your role isn't to perform—it's to facilitate.";
+}
 
         document.getElementById('resultTitle').innerText = title;
         document.getElementById('resultDesc').innerHTML = desc; // innerHTML for bolding
