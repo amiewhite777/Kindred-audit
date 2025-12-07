@@ -163,7 +163,7 @@
             <span class="label">SYSTEM STATUS:</span>
             <p><strong>Global Waitlist:</strong> 4,102 Nodes</p>
             <p>To preserve Swarm Intelligence, we only admit users who prove Reciprocity Potential.</p>
-            <button class="btn primary-btn" onclick="window.location.href='mailto:waitlist@kindred.com?subject=Audit%20Result%20Application'">APPLY FOR BETA ACCESS</button>
+            <button class="btn primary-btn" onclick="openModal()">APPLY FOR BETA ACCESS</button>
             <p style="font-size: 0.8em; text-align: center; margin-top: 10px;">*Invite 1 reciprocal node to skip the line.</p>
         </div>
     </div>
@@ -335,6 +335,116 @@
         document.getElementById('resultPrescription').innerText = prescription;
     }
 </script>
+<!-- Beta Access Modal -->
+<div id="betaModal" class="modal-overlay" style="display:none;">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    
+    <div id="formState">
+      <div class="modal-header">
+        <span class="status-tag">BETA ACCESS</span>
+        <h2 style="color:#fff;margin:12px 0 8px;">Join the Network</h2>
+        <p style="color:#888;margin:0;">Submit your coordinates for network integration.</p>
+      </div>
 
+      <form onsubmit="submitEmail(event)" style="margin-top:24px;">
+        <div style="margin-bottom:20px;">
+          <label style="display:block;color:#666;font-size:11px;letter-spacing:1px;margin-bottom:8px;">NODE IDENTIFIER (EMAIL)</label>
+          <input type="email" id="emailInput" placeholder="your@email.com" required 
+            style="width:100%;background:#111;border:1px solid #2a2a2a;border-radius:6px;padding:14px 16px;color:#fff;font-size:15px;box-sizing:border-box;">
+        </div>
+        
+        <div id="errorMsg" style="display:none;background:rgba(255,68,68,0.1);border:1px solid rgba(255,68,68,0.3);color:#ff6b6b;padding:12px;border-radius:6px;font-size:13px;margin-bottom:20px;"></div>
+        
+        <button type="submit" id="submitBtn" 
+          style="width:100%;background:#00ff88;color:#000;border:none;padding:16px;border-radius:6px;font-size:14px;font-weight:600;letter-spacing:1px;cursor:pointer;">
+          REQUEST ACCESS
+        </button>
+      </form>
+      
+      <p style="color:#555;font-size:12px;text-align:center;margin:16px 0 0;">Your data remains encrypted. No spam. Exit anytime.</p>
+    </div>
+
+    <div id="successState" style="display:none;text-align:center;padding:20px 0;">
+      <div style="font-size:48px;color:#00ff88;margin-bottom:16px;">◉</div>
+      <h2 style="color:#00ff88;margin-bottom:12px;">NODE REGISTERED</h2>
+      <p style="color:#888;">Your position in the network has been logged.</p>
+      <p style="color:#888;margin-top:24px;font-size:13px;">Share your referral code to skip the line:</p>
+      <code id="referralCode" style="display:block;background:#111;border:1px dashed #00ff88;padding:12px 20px;border-radius:6px;color:#00ff88;font-size:16px;margin-top:8px;letter-spacing:2px;"></code>
+    </div>
+  </div>
+</div>
+
+<style>
+.modal-overlay {
+  position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;backdrop-filter:blur(4px);
+}
+.modal-content {
+  background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;max-width:420px;width:100%;padding:32px;position:relative;box-shadow:0 0 60px rgba(0,255,136,0.1);
+}
+.modal-close {
+  position:absolute;top:16px;right:16px;background:none;border:none;color:#666;font-size:24px;cursor:pointer;
+}
+.modal-close:hover {color:#fff;}
+.status-tag {
+  display:inline-block;background:rgba(0,255,136,0.1);color:#00ff88;padding:4px 12px;border-radius:4px;font-size:11px;font-weight:600;letter-spacing:1px;
+}
+#emailInput:focus {outline:none;border-color:#00ff88;box-shadow:0 0 0 3px rgba(0,255,136,0.1);}
+</style>
+
+<script>
+function openModal() {
+  document.getElementById('betaModal').style.display = 'flex';
+}
+function closeModal() {
+  document.getElementById('betaModal').style.display = 'none';
+}
+document.getElementById('betaModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+async function submitEmail(e) {
+  e.preventDefault();
+  const email = document.getElementById('emailInput').value;
+  const btn = document.getElementById('submitBtn');
+  const errorMsg = document.getElementById('errorMsg');
+  
+  btn.textContent = 'ESTABLISHING CONNECTION...';
+  btn.disabled = true;
+  errorMsg.style.display = 'none';
+
+  try {
+    const res = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    
+    if (!res.ok) throw new Error(data.error || 'Something went wrong');
+    
+    document.getElementById('formState').style.display = 'none';
+    document.getElementById('successState').style.display = 'block';
+    document.getElementById('referralCode').textContent = data.referralCode;
+    
+    updateCounter();
+  } catch (err) {
+    errorMsg.textContent = err.message;
+    errorMsg.style.display = 'block';
+    btn.textContent = 'REQUEST ACCESS';
+    btn.disabled = false;
+  }
+}
+
+async function updateCounter() {
+  try {
+    const res = await fetch('/api/waitlist-count');
+    const data = await res.json();
+    const counterEl = document.querySelector('.waitlist-count');
+    if (counterEl) counterEl.textContent = data.count.toLocaleString();
+  } catch (e) {}
+}
+updateCounter();
+</script>
 </body>
 </html>
