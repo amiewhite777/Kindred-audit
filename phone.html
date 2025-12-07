@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KINDRED</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #1a1a1a; min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: 'Space Mono', monospace; overflow: hidden; }
+    .phone-container { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; }
+    .phone-wrapper { position: relative; width: 100%; max-width: 400px; aspect-ratio: 3/4; }
+    .phone-frame { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; z-index: 10; pointer-events: none; }
+    .screen-content { position: absolute; top: 4.5%; left: 9.5%; width: 54%; height: 72%; background: #0a0a0a; border-radius: 20px; overflow-y: auto; overflow-x: hidden; z-index: 5; }
+    .screen-content::-webkit-scrollbar { width: 3px; }
+    .screen-content::-webkit-scrollbar-thumb { background: #00ff88; border-radius: 2px; }
+    .app { padding: 15px 12px; color: #e0e0e0; min-height: 100%; }
+    .app-header { display: flex; justify-content: space-between; font-size: 8px; color: #666; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #2a2a2a; }
+    .status-online { color: #00ff88; animation: blink 1.5s infinite; }
+    @keyframes blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0.4; } }
+    .app-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .app-subtitle { font-size: 10px; color: #888; margin-bottom: 15px; }
+    .app-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+    .app-icon { aspect-ratio: 1; background: #111; border: 1px solid #2a2a2a; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+    .app-icon:hover { border-color: #00ff88; transform: scale(1.05); }
+    .app-icon:active { transform: scale(0.95); }
+    .app-icon-emoji { font-size: 20px; margin-bottom: 3px; }
+    .app-icon-label { font-size: 7px; color: #888; }
+    .app-icon.locked { opacity: 0.4; cursor: not-allowed; }
+    .app-icon.locked:hover { border-color: #2a2a2a; transform: none; }
+    .back-btn { background: none; border: none; color: #00ff88; font-family: 'Space Mono', monospace; font-size: 10px; cursor: pointer; margin-bottom: 10px; }
+    .coming-soon { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60%; text-align: center; }
+    .coming-soon-icon { font-size: 40px; margin-bottom: 15px; }
+    .coming-soon h2 { color: #00ff88; font-size: 14px; margin-bottom: 10px; }
+    .coming-soon p { color: #666; font-size: 10px; line-height: 1.5; padding: 0 10px; }
+  </style>
+</head>
+<body>
+  <div class="phone-container">
+    <div class="phone-wrapper">
+      <img src="phone-frame.png.JPG" alt="" class="phone-frame">
+      <div class="screen-content">
+        <div class="app" id="app-content">
+          <div class="app-header">
+            <span>NODAL OS v2.4</span>
+            <span class="status-online">● ONLINE</span>
+          </div>
+          <h1 class="app-title">KINDRED</h1>
+          <p class="app-subtitle">Welcome back, Node.</p>
+          <div class="app-grid">
+            <div class="app-icon" onclick="openApp('audit')"><span class="app-icon-emoji">🔬</span><span class="app-icon-label">Audit</span></div>
+            <div class="app-icon" onclick="openApp('bible')"><span class="app-icon-emoji">📖</span><span class="app-icon-label">Bible</span></div>
+            <div class="app-icon" onclick="openApp('flappy')"><span class="app-icon-emoji">🎮</span><span class="app-icon-label">Flappy</span></div>
+            <div class="app-icon" onclick="openApp('chess')"><span class="app-icon-emoji">♟️</span><span class="app-icon-label">Chess</span></div>
+            <div class="app-icon" onclick="openApp('go')"><span class="app-icon-emoji">⚫</span><span class="app-icon-label">Go</span></div>
+            <div class="app-icon" onclick="openApp('music')"><span class="app-icon-emoji">🎵</span><span class="app-icon-label">Ambient</span></div>
+            <div class="app-icon locked"><span class="app-icon-emoji">🔒</span><span class="app-icon-label">Colony</span></div>
+            <div class="app-icon locked"><span class="app-icon-emoji">🔒</span><span class="app-icon-label">Weaver</span></div>
+            <div class="app-icon locked"><span class="app-icon-emoji">🔒</span><span class="app-icon-label">???</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const homeHTML = document.getElementById('app-content').innerHTML;
+    function openApp(name) {
+      const c = document.getElementById('app-content');
+      const apps = {
+        audit: { icon: '🔬', title: 'SOCIAL AUDIT', desc: 'Map your network topology.', link: '/index.html', linkText: 'Launch Audit →' },
+        bible: { icon: '📖', title: 'NETWORK BIBLE', desc: '36 chapters on nodal theory.', link: '/theory.html', linkText: 'Read Bible →' },
+        flappy: { icon: '🎮', title: 'FLAPPY NODE', desc: 'Navigate networks from atomic to cosmic scale.' },
+        chess: { icon: '♟️', title: 'CHESS', desc: 'Challenge The Weaver.' },
+        go: { icon: '⚫', title: 'GO', desc: 'Pure network dynamics.' },
+        music: { icon: '🎵', title: 'AMBIENT', desc: 'Dark soundscapes for focus.' }
+      };
+      const a = apps[name];
+      c.innerHTML = `<button class="back-btn" onclick="goHome()">← Back</button><div class="app-header"><span>${a.title}</span><span class="status-online">● ${a.link ? 'ONLINE' : 'BUILDING'}</span></div><div class="coming-soon"><span class="coming-soon-icon">${a.icon}</span><h2>${a.link ? a.title : 'COMING SOON'}</h2><p>${a.desc}</p>${a.link ? `<br><a href="${a.link}" style="color:#00ff88;font-size:10px;">${a.linkText}</a>` : ''}</div>`;
+    }
+    function goHome() { document.getElementById('app-content').innerHTML = homeHTML; }
+  </script>
+</body>
+</html>
