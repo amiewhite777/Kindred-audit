@@ -353,7 +353,11 @@
           <input type="email" id="emailInput" placeholder="your@email.com" required 
             style="width:100%;background:#111;border:1px solid #2a2a2a;border-radius:6px;padding:14px 16px;color:#fff;font-size:15px;box-sizing:border-box;">
         </div>
-        
+        <div style="margin-bottom:20px;">
+  <label style="display:block;color:#666;font-size:11px;letter-spacing:1px;margin-bottom:8px;">REFERRAL CODE (OPTIONAL)</label>
+  <input type="text" id="referralInput" placeholder="Got a code? Skip the line" 
+    style="width:100%;background:#111;border:1px solid #2a2a2a;border-radius:6px;padding:14px 16px;color:#fff;font-size:15px;box-sizing:border-box;">
+</div>
         <div id="errorMsg" style="display:none;background:rgba(255,68,68,0.1);border:1px solid rgba(255,68,68,0.3);color:#ff6b6b;padding:12px;border-radius:6px;font-size:13px;margin-bottom:20px;"></div>
         
         <button type="submit" id="submitBtn" 
@@ -417,7 +421,7 @@ async function submitEmail(e) {
     const res = await fetch('/api/waitlist', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email, referralCode: document.getElementById('referralInput').value })
     });
     const data = await res.json();
     
