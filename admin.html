@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kindred Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #00ff88;
+      font-size: 14px;
+      letter-spacing: 3px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .stat-box {
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+    .stat-label {
+      color: #666;
+      font-size: 11px;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      color: #00ff88;
+      font-size: 36px;
+      font-weight: 700;
+    }
+    .stat-row {
+      display: flex;
+      gap: 15px;
+    }
+    .stat-row .stat-box {
+      flex: 1;
+    }
+    .stat-row .stat-value {
+      font-size: 28px;
+    }
+    .breakdown {
+      margin-top: 10px;
+    }
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .breakdown-item:last-child {
+      border-bottom: none;
+    }
+    .breakdown-name {
+      color: #aaa;
+    }
+    .breakdown-count {
+      color: #00ff88;
+      font-weight: 700;
+    }
+    .last-updated {
+      text-align: center;
+      color: #444;
+      font-size: 11px;
+      margin-top: 30px;
+    }
+    .refresh-btn {
+      display: block;
+      width: 100%;
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      color: #666;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.2s;
+    }
+    .refresh-btn:hover {
+      border-color: #00ff88;
+      color: #00ff88;
+    }
+    .loading {
+      color: #444;
+      text-align: center;
+      padding: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>KINDRED ADMIN DASHBOARD</h1>
+    
+    <div id="dashboard">
+      <div class="loading">Loading stats...</div>
+    </div>
+    
+    <button class="refresh-btn" onclick="loadStats()">↻ Refresh</button>
+    <p class="last-updated" id="lastUpdated"></p>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://qdwkfnmdrbcjrxqfbpkj.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkd2tmbm1kcmJjanJ4cWZicGtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxNjMxNzYsImV4cCI6MjA2NDczOTE3Nn0.NE6vHrWbHISz1Z0dkpfyrDSbhoierD6EbICIrMppPJk';
+
+    async function loadStats() {
+      try {
+        // Get all waitlist entries
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist?select=*`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+        const data = await res.json();
+        
+        // Calculate stats
+        const total = data.length;
+        
+        // Today's signups
+        const today = new Date().toISOString().split('T')[0];
+        const todayCount = data.filter(d => d.created_at && d.created_at.startsWith(today)).length;
+        
+        // This week
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        const weekCount = data.filter(d => d.created_at && d.created_at > weekAgo).length;
+        
+        // Render dashboard
+        document.getElementById('dashboard').innerHTML = `
+          <div class="stat-box">
+            <div class="stat-label">TOTAL WAITLIST SIGNUPS</div>
+            <div class="stat-value">${total}</div>
+          </div>
+          
+          <div class="stat-row">
+            <div class="stat-box">
+              <div class="stat-label">TODAY</div>
+              <div class="stat-value">${todayCount}</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">THIS WEEK</div>
+              <div class="stat-value">${weekCount}</div>
+            </div>
+          </div>
+          
+          <div class="stat-box">
+            <div class="stat-label">RECENT SIGNUPS</div>
+            <div class="breakdown">
+              ${data.slice(-5).reverse().map(d => `
+                <div class="breakdown-item">
+                  <span class="breakdown-name">${d.email}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+        
+        document.getElementById('lastUpdated').textContent = 
+          'Last updated: ' + new Date().toLocaleTimeString();
+          
+      } catch (err) {
+        document.getElementById('dashboard').innerHTML = 
+          '<div class="loading">Error loading stats</div>';
+        console.error(err);
+      }
+    }
+    
+    // Load on page load
+    loadStats();
+    
+    // Auto-refresh every 30 seconds
+    setInterval(loadStats, 30000);
+  </script>
+</body>
+</html>
