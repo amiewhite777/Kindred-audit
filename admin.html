@@ -118,12 +118,14 @@
   <script>
     async function loadStats() {
   try {
-    const [waitlistRes, resultsRes] = await Promise.all([
-      fetch('/api/waitlist-count'),
-      fetch('/api/results-breakdown')
-    ]);
+    const waitlistRes = await fetch('/api/waitlist-count');
     const waitlist = await waitlistRes.json();
-    const results = await resultsRes.json();
+    
+    let results = { total: 0, breakdown: {} };
+    try {
+      const resultsRes = await fetch('/api/results-breakdown');
+      results = await resultsRes.json();
+    } catch (e) {}
     
     const breakdown = results.breakdown || {};
     
@@ -150,7 +152,6 @@
     document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
   } catch (err) {
     document.getElementById('dashboard').innerHTML = '<div class="loading">Error loading stats</div>';
-    console.error(err);
   }
 }
     
