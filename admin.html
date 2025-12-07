@@ -118,27 +118,41 @@
   <script>
     async function loadStats() {
   try {
-    const res = await fetch('/api/waitlist-count');
-    const data = await res.json();
+    const [waitlistRes, resultsRes] = await Promise.all([
+      fetch('/api/waitlist-count'),
+      fetch('/api/results-breakdown')
+    ]);
+    const waitlist = await waitlistRes.json();
+    const results = await resultsRes.json();
+    
+    const breakdown = results.breakdown || {};
     
     document.getElementById('dashboard').innerHTML = `
       <div class="stat-box">
-        <div class="stat-label">TOTAL WAITLIST SIGNUPS</div>
-        <div class="stat-value">${data.count || 0}</div>
+        <div class="stat-label">WAITLIST SIGNUPS</div>
+        <div class="stat-value">${waitlist.count || 0}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">AUDITS COMPLETED</div>
+        <div class="stat-value">${results.total || 0}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">RESULTS BREAKDOWN</div>
+        <div class="breakdown">
+          <div class="breakdown-item"><span>Stranded Node</span><span class="breakdown-count">${breakdown['THE STRANDED NODE'] || 0}</span></div>
+          <div class="breakdown-item"><span>Passive Observer</span><span class="breakdown-count">${breakdown['THE PASSIVE OBSERVER'] || 0}</span></div>
+          <div class="breakdown-item"><span>Hub Dependent</span><span class="breakdown-count">${breakdown['THE HUB DEPENDENT'] || 0}</span></div>
+          <div class="breakdown-item"><span>Colony Architect</span><span class="breakdown-count">${breakdown['COLONY ARCHITECT'] || 0}</span></div>
+        </div>
       </div>
     `;
     
-    document.getElementById('lastUpdated').textContent = 
-      'Last updated: ' + new Date().toLocaleTimeString();
-      
+    document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
   } catch (err) {
-    document.getElementById('dashboard').innerHTML = 
-      '<div class="loading">Error loading stats</div>';
+    document.getElementById('dashboard').innerHTML = '<div class="loading">Error loading stats</div>';
     console.error(err);
   }
 }
-    // Load on page load
-    loadStats();
     
     // Auto-refresh every 30 seconds
     setInterval(loadStats, 30000);
