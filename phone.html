@@ -10,8 +10,8 @@
     body { background: #1a1a1a; min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: 'Space Mono', monospace; overflow: hidden; }
     .phone-container { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; }
     .phone-wrapper { position: relative; width: 100%; max-width: 500px; }
-    .phone-frame { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; z-index: 10; pointer-events: none; }
-    .screen-content { position: absolute; top: 8%; left: 12%; width: 50%; height: 65%;; background: #0a0a0a; border-radius: 20px; overflow-y: auto; overflow-x: hidden; z-index: 5; }
+    .phone-frame { width: 100%; height: auto; display: block; }
+    .screen-content { position: absolute; top: 11%; left: 15%; width: 44%; height: 60%; background: #0a0a0a; border-radius: 20px; overflow-y: auto; overflow-x: hidden; z-index: 5; }
     .screen-content::-webkit-scrollbar { width: 3px; }
     .screen-content::-webkit-scrollbar-thumb { background: #00ff88; border-radius: 2px; }
     .app { padding: 15px 12px; color: #e0e0e0; min-height: 100%; }
@@ -27,7 +27,6 @@
     .app-icon-emoji { font-size: 20px; margin-bottom: 3px; }
     .app-icon-label { font-size: 7px; color: #888; }
     .app-icon.locked { opacity: 0.4; cursor: not-allowed; }
-    .app-icon.locked:hover { border-color: #2a2a2a; transform: none; }
     .back-btn { background: none; border: none; color: #00ff88; font-family: 'Space Mono', monospace; font-size: 10px; cursor: pointer; margin-bottom: 10px; }
     .coming-soon { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60%; text-align: center; }
     .coming-soon-icon { font-size: 40px; margin-bottom: 15px; }
@@ -75,7 +74,7 @@
         music: { icon: '🎵', title: 'AMBIENT', desc: 'Dark soundscapes for focus.' }
       };
       const a = apps[name];
-      c.innerHTML = `<button class="back-btn" onclick="goHome()">← Back</button><div class="app-header"><span>${a.title}</span><span class="status-online">● ${a.link ? 'ONLINE' : 'BUILDING'}</span></div><div class="coming-soon"><span class="coming-soon-icon">${a.icon}</span><h2>${a.link ? a.title : 'COMING SOON'}</h2><p>${a.desc}</p>${a.link ? `<br><a href="${a.link}" style="color:#00ff88;font-size:10px;">${a.linkText}</a>` : ''}</div>`;
+      c.innerHTML = '<button class="back-btn" onclick="goHome()">← Back</button><div class="app-header"><span>'+a.title+'</span><span class="status-online">● '+(a.link ? 'ONLINE' : 'BUILDING')+'</span></div><div class="coming-soon"><span class="coming-soon-icon">'+a.icon+'</span><h2>'+(a.link ? a.title : 'COMING SOON')+'</h2><p>'+a.desc+'</p>'+(a.link ? '<br><a href="'+a.link+'" style="color:#00ff88;font-size:10px;">'+a.linkText+'</a>' : '')+'</div>';
     }
     function goHome() { document.getElementById('app-content').innerHTML = homeHTML; }
   </script>
