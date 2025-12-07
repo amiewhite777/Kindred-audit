@@ -1,12 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
-import { Resend } from 'resend';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY
 );
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -30,7 +27,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Already registered' });
     }
 
-    // Check for referral
+    // Check for valid referral code
     let referredBy = null;
     if (referralCode) {
       const { data: referrer } = await supabase
@@ -41,11 +38,11 @@ export default async function handler(req, res) {
 
       if (referrer) {
         referredBy = referrer.id;
+        // Increment referrer's count
         await supabase
           .from('waitlist')
-          .update({ 
-            referral_count: supabase.rpc('increment_referral_count', { user_id: referrer.id })
-          });
+          .update({ referral_count: supabase.raw('referral_count + 1') })
+          .eq('id', referrer.id);
       }
     }
 
@@ -61,20 +58,6 @@ export default async function handler(req, res) {
     const { count } = await supabase
       .from('waitlist')
       .select('*', { count: 'exact', head: true });
-
-    // Send notification email to you
-    await resend.emails.send({
-      from: 'Kindred <onboarding@resend.dev>',
-      to: 'amie.white777@gmail.com',
-      subject: '🟢 New Node Joined Kindred',
-      html: `
-        <h2>New Waitlist Signup!</h2>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Referral Code:</strong> ${newReferralCode}</p>
-        <p><strong>Referred By:</strong> ${referralCode || 'Direct signup'}</p>
-        <p><strong>Total Nodes:</strong> ${4102 + (count || 0)}</p>
-      `,
-    });
 
     return res.status(200).json({
       success: true,
