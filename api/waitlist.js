@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     if (referralCode) {
       const { data: referrer } = await supabase
         .from('waitlist')
-        .select('id')
+        .select('id, referral_count')
         .ilike('referral_code', referralCode)
         .single();
 
@@ -41,7 +41,7 @@ export default async function handler(req, res) {
         // Increment referrer's count
         await supabase
           .from('waitlist')
-          .update({ referral_count: supabase.raw('referral_count + 1') })
+          .update({ referral_count: (referrer.referral_count || 0) + 1 })
           .eq('id', referrer.id);
       }
     }
